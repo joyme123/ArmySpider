@@ -21,5 +21,27 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpclient</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.jsoup</groupId>
+    	<artifactId>jsoup</artifactId>
+    </dependency>
   </dependencies>
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>org.apache.httpcomponents</groupId>
+  			<artifactId>httpclient</artifactId>
+  			<version>4.5.2</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.jsoup</groupId>
+  			<artifactId>jsoup</artifactId>
+  			<version>1.7.2</version>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
 </project>
