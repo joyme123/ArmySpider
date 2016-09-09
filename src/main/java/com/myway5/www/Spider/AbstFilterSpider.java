@@ -1,4 +1,4 @@
-package com.mway5.www.Spider;
+package com.myway5.www.Spider;
 
 public abstract class AbstFilterSpider implements IFilterSpider{
 	protected IFilterSpider nextFilterSpider;

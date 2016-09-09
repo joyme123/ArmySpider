@@ -1,8 +1,8 @@
 package com.mway5.www.SpiderManager;
 
-import com.mway5.www.Spider.HttpSpider;
-import com.mway5.www.Spider.IFilterSpider;
-import com.mway5.www.Spider.ProcessSpider;
+import com.myway5.www.Spider.HttpSpider;
+import com.myway5.www.Spider.IFilterSpider;
+import com.myway5.www.Spider.ProcessSpider;
 
 public abstract class AbstSpiderManager implements ISpiderManager{
 	private Boolean isFirstFilter = true;
@@ -43,7 +43,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	public AbstSpiderManager setFilterSpider(IFilterSpider filterSpider){
 		//如果是第一个过滤器，则
 		if(isFirstFilter){
-			this.processSpider.setFilter(filterSpider);
+			this.processSpider.setFilterSpider(filterSpider);
 			isFirstFilter = false;
 		}else{
 			this.preFilterSpider.setNextFilter(filterSpider);
