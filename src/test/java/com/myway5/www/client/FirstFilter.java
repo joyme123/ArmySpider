@@ -40,10 +40,10 @@ public class FirstFilter extends AbstFilterSpider{
 		}
 		
 		String url = urlBuilder.toString();
-		url.replace("resolution", size);
+		url = url.replace("resolution",size);
 		
 		logger.debug("第一个过滤器启动----{}---{}",page.getUrl(),base+url);
-		//this.runNext(o);		//启动下一个过滤器
+		this.runNext(url);		//启动下一个过滤器
 	}
 
 }

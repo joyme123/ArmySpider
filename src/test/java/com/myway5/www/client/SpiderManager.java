@@ -21,7 +21,7 @@ public class SpiderManager extends AbstSpiderManager{
 		processSpider.setLimitation("http://wallpaper\\.pconline\\.com\\.cn/.*");
 		
 		FirstFilter firstFilter = new FirstFilter();
-		//SecondFilter secondFilter = new SecondFilter();
+		SecondFilter secondFilter = new SecondFilter();
 		//ThirdFilter thirdFilter = new ThirdFilter();
 		
 		SpiderManager spiderManager = new SpiderManager();
@@ -29,6 +29,7 @@ public class SpiderManager extends AbstSpiderManager{
 		.setHttpSpider(httpSpider)
 		.setProcessSpider(processSpider)
 		.setFilterSpider(firstFilter)
+		.setFilterSpider(secondFilter)
 		.run();
 	}
 
