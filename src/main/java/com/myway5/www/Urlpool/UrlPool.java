@@ -1,4 +1,4 @@
-package com.myway5.www.urlpool;
+package com.myway5.www.Urlpool;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;

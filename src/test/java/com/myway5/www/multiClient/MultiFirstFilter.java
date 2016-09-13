@@ -1,4 +1,4 @@
-package com.myway5.www.client;
+package com.myway5.www.multiClient;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import com.myway5.www.Spider.AbstFilterSpider;
 import com.myway5.www.Util.Page;
 
-public class FirstFilter extends AbstFilterSpider{
+public class MultiFirstFilter extends AbstFilterSpider{
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private static String base = "http://www.pconline.com.cn/images/html/viewpic_pconline.htm?";
-	
+	private FilterPool filterPool = FilterPool.getInstance();
 	public void filter(Object o) {
-		Page page = (Page)o;
+		Page page = (Page) o;
 		Document document = page.getDocument();
 		
 		/*获取要下载图片的尺寸*/
@@ -43,7 +43,14 @@ public class FirstFilter extends AbstFilterSpider{
 		url = url.replace("resolution",size);
 		
 		logger.debug("第一个过滤器启动----{}---{}",page.getUrl(),base+url);
-		this.runNext(url);		//启动下一个过滤器
+		if(isSetNextFilterSpider())
+			//如果设置了下一个过滤器，则使用runNext
+			runNext(url);
+		else
+			//否则将过滤出来的地址放在filterPool中
+			filterPool.push(url);
 	}
+
+
 
 }

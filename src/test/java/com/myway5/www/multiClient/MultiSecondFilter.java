@@ -1,9 +1,10 @@
-package com.myway5.www.client;
+package com.myway5.www.multiClient;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -15,12 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Spider.AbstFilterSpider;
-import com.myway5.www.Util.Page;
 
-
-public class SecondFilter extends AbstFilterSpider{
+public class MultiSecondFilter extends AbstFilterSpider{
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	
 	public void filter(Object o) {
 		String url = (String)o;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -61,7 +59,6 @@ public class SecondFilter extends AbstFilterSpider{
 			e.printStackTrace();
 		}
 		logger.debug("第二个过滤器启动----{}",url);
-		//this.runNext(o);		//启动下一个过滤器
+		//this.runNext(o);		//启动下一个过滤器,如果没有设置则不会启动
 	}
-
 }

@@ -1,4 +1,4 @@
-package com.myway5.www.urlpool;
+package com.myway5.www.Urlpool;
 
 public abstract class AbstUrlPool implements IUrlPool{
 	private IDuplicateUrlRemover duplicateChecker = new HashMapDuplicateRemover();	//默认使用HashMap来去重

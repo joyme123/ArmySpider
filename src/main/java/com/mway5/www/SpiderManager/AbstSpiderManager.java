@@ -3,12 +3,14 @@ package com.mway5.www.SpiderManager;
 import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IFilterSpider;
 import com.myway5.www.Spider.ProcessSpider;
+import com.myway5.www.ThreadPool.HttpSpiderThreadPool;
 
 public abstract class AbstSpiderManager implements ISpiderManager{
 	private Boolean isFirstFilter = true;
 	protected IFilterSpider preFilterSpider;
 	protected ProcessSpider processSpider;
 	protected HttpSpider httpSpider;
+	protected HttpSpiderThreadPool httpSpiderThreadPool;
 	/*
 	 * 设置进行Http请求的爬虫
 	 * @param httpSpider HttpSpider对象
@@ -51,8 +53,21 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 		preFilterSpider = filterSpider;
 		return this;
 	}
+	
+	public void setHttpSpiderThreadPool(int threadNum){
+		httpSpiderThreadPool = new HttpSpiderThreadPool(threadNum, threadNum);
+	}
+	
+	public void thread(int corePoolSize,int MaximumPoolSize){
+		httpSpiderThreadPool = new HttpSpiderThreadPool(corePoolSize, MaximumPoolSize);
+	}
+	
+	public void thread(int corePoolSize,int MaximumPoolSize,long keepAliveTime){
+		httpSpiderThreadPool = new HttpSpiderThreadPool(corePoolSize, MaximumPoolSize,keepAliveTime);
+	}
+	
 	public void run(){
-		httpSpider.requestPage();
+		httpSpiderThreadPool.startExecute();
 	}
 	
 }
