@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Spider.AbstFilterSpider;
-import com.myway5.www.Util.Page;
 
 
 public class SecondFilter extends AbstFilterSpider{

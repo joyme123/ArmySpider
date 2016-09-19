@@ -43,15 +43,16 @@ public class FilterSpiderThreadPool{
 	}
 	
 	public void startExecute(){
-		if(!multiPool.isEmpty()){
-			final Object o = multiPool.pull();
-			executor.execute(new Runnable() {
-				
-				public void run() {
-					filterSpider.filter(o);
-					
-				}
-			});
+		while(true){
+			if(!multiPool.isEmpty()){
+				final Object o = multiPool.pull();
+				executor.execute(new Runnable() {
+					public void run() {
+						filterSpider.filter(o);
+						
+					}
+				});
+			}
 		}
 	}
 }

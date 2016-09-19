@@ -34,12 +34,10 @@ public class MultiSpiderManager extends AbstSpiderManager{
 		secondFilterSpiderThreadPool.setPool(new FilterPool());
 		secondFilterSpiderThreadPool.setFilter(new SecondFilter());
 		
-		while(true){
-			httpSpiderThreadPool.startExecute();
-			processSpiderThreadPool.startExecute();
-			firstFilterSpiderThreadPool.startExecute();
-			secondFilterSpiderThreadPool.startExecute();
-		}
+		httpSpiderThreadPool.startExecute();
+		processSpiderThreadPool.startExecute();
+		firstFilterSpiderThreadPool.startExecute();
+		secondFilterSpiderThreadPool.startExecute();
 	}
 
 }

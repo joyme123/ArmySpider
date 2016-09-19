@@ -4,6 +4,7 @@ import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IFilterSpider;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.ThreadPool.HttpSpiderThreadPool;
+import com.myway5.www.Urlpool.UrlPool;
 
 public abstract class AbstSpiderManager implements ISpiderManager{
 	private Boolean isFirstFilter = true;
@@ -31,8 +32,8 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	 */
 	public AbstSpiderManager setProcessSpider(ProcessSpider processSpider){
 		this.processSpider = processSpider;
-		if(httpSpider != null){
-			httpSpider.setPrecessSpider(processSpider);
+		if(httpSpiderThreadPool != null){
+			httpSpiderThreadPool.setProcessSpider(processSpider);
 		}
 		return this;
 	}
@@ -54,16 +55,34 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 		return this;
 	}
 	
-	public void setHttpSpiderThreadPool(int threadNum){
+	public AbstSpiderManager thread(int threadNum){
 		httpSpiderThreadPool = new HttpSpiderThreadPool(threadNum, threadNum);
+		if(this.processSpider!=null){
+			httpSpiderThreadPool.setProcessSpider(processSpider);
+		}
+		return this;
 	}
 	
-	public void thread(int corePoolSize,int MaximumPoolSize){
+	public AbstSpiderManager thread(int corePoolSize,int MaximumPoolSize){
 		httpSpiderThreadPool = new HttpSpiderThreadPool(corePoolSize, MaximumPoolSize);
+		if(this.processSpider!=null){
+			httpSpiderThreadPool.setProcessSpider(processSpider);
+		}
+		return this;
 	}
 	
-	public void thread(int corePoolSize,int MaximumPoolSize,long keepAliveTime){
+	public AbstSpiderManager thread(int corePoolSize,int MaximumPoolSize,long keepAliveTime){
 		httpSpiderThreadPool = new HttpSpiderThreadPool(corePoolSize, MaximumPoolSize,keepAliveTime);
+		if(this.processSpider!=null){
+			httpSpiderThreadPool.setProcessSpider(processSpider);
+		}
+		return this;
+	}
+	
+	
+	public AbstSpiderManager setTargetUrl(String url){
+		UrlPool.getInstance().push(url);
+		return this;
 	}
 	
 	public void run(){

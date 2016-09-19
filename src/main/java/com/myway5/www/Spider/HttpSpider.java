@@ -1,7 +1,6 @@
 package com.myway5.www.Spider;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
