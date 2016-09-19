@@ -5,6 +5,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.Urlpool.UrlPool;
@@ -15,6 +18,9 @@ public class HttpSpiderThreadPool{
 	private UrlPool urlPool = UrlPool.getInstance();
 	private HttpSpiderConfig config = null;
 	private ProcessSpider processSpider = null;
+	private boolean run = true;
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	private int waitFlag = 0;
 	
 	public HttpSpiderThreadPool(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,BlockingQueue<Runnable> workQueue) {
 		executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
@@ -46,7 +52,7 @@ public class HttpSpiderThreadPool{
 	}
 	
 	public void startExecute(){
-		while(true){
+		while(run){
 			if(!urlPool.isEmpty()){
 				final String url = urlPool.pull();
 				executor.execute(new Runnable() {
@@ -59,13 +65,26 @@ public class HttpSpiderThreadPool{
 						httpSpider.requestPage(url);
 					}
 				});
+			}else{
+				//如果等待3秒，仍然没有新的url加入，就认为任务结束啦
+				try {
+					if(waitFlag == 0){
+						Thread.sleep(3000);
+						waitFlag = 1;
+					}else{
+						run = false;
+						logger.debug("execute finish,progress stop!!!");
+					}
+				} catch (InterruptedException e) {
+					logger.debug("执行出错{}",e.getMessage());
+				}
 			}
 		}
 	}
 	
 	public void startMultiExecute(){
-		while(true){
-			if(!urlPool.isEmpty()){
+		if(!urlPool.isEmpty()){
+				waitFlag = 0;
 				final String url = urlPool.pull();
 				executor.execute(new Runnable() {
 					
@@ -77,7 +96,18 @@ public class HttpSpiderThreadPool{
 						httpSpider.requestPage(url);
 					}
 				});
+//			}else{
+//				//如果等待3秒，仍然没有新的url加入，就认为任务结束啦
+//				try {
+//					if(waitFlag == 0){
+//						Thread.sleep(3000);
+//						waitFlag = 1;
+//					}else{
+//						run = false;
+//					}
+//				} catch (InterruptedException e) {
+//					logger.debug("执行出错{}",e.getMessage());
+//				}
 			}
-		}
 	}
 }

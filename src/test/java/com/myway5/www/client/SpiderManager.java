@@ -1,6 +1,7 @@
 package com.myway5.www.client;
 
 import com.mway5.www.SpiderManager.AbstSpiderManager;
+import com.myway5.www.Monitor.MonitorEngineAgent;
 import com.myway5.www.Spider.ProcessSpider;
 
 public class SpiderManager extends AbstSpiderManager{
@@ -11,6 +12,12 @@ public class SpiderManager extends AbstSpiderManager{
 	}
 	
 	public static void main(String[] args){
+		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+		System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
+		
+		
+		new MonitorEngineAgent().start();
 		System.out.println("start");
 		FirstFilter firstFilter = new FirstFilter();
 		SecondFilter secondFilter = new SecondFilter();

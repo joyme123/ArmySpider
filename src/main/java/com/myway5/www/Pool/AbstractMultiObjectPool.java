@@ -8,7 +8,7 @@ public class AbstractMultiObjectPool {
 	private AtomicInteger leftPageCount = new AtomicInteger(0);
 	
 	public boolean isEmpty(){
-		if(leftPageCount.get() == 0){
+		if(leftPageCount.intValue() <= 0){
 			return true;
 		}
 		return false;
@@ -28,6 +28,8 @@ public class AbstractMultiObjectPool {
 	}
 	
 	public Object pull(){
+		leftPageCount.decrementAndGet();
 		return pagePool.poll();
+		
 	}
 }

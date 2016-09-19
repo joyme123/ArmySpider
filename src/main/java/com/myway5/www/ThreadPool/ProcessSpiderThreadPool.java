@@ -36,21 +36,19 @@ public class ProcessSpiderThreadPool{
 		this.config = config;
 	}
 	
-	public void startExecute(){
-		while(true){
-			if(!multiPagePool.isEmpty()){
-				final Page page = (Page) multiPagePool.pull();
-				executor.execute(new Runnable() {
-					
-					public void run() {
-						ProcessSpider processSpider = new ProcessSpider();
-						if(config!=null){
-							processSpider.setConfig(config);
-						}
-						processSpider.process(page);
+	public void startMultiExecute(){
+		if(!multiPagePool.isEmpty()){
+			final Page page = (Page) multiPagePool.pull();
+			executor.execute(new Runnable() {
+				
+				public void run() {
+					ProcessSpider processSpider = new ProcessSpider();
+					if(config!=null){
+						processSpider.setConfig(config);
 					}
-				});
-			}
+					processSpider.process(page);
+				}
+			});
 		}
 	}
 	

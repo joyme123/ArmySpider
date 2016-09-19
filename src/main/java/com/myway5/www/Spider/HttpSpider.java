@@ -26,7 +26,6 @@ public class HttpSpider {
 	private Map<String,String> data;
 	private Map<String,String> cookies;
 	private int timeout = 3000;//默认3秒，0代表无时间限制
-	private AtomicInteger errorCount = new AtomicInteger(0);
 	private String userAgent;
 	private UrlPool urlPool = UrlPool.getInstance();
 	private MultiProcessPagePool processPagePool = MultiProcessPagePool.getInstance();
@@ -78,6 +77,7 @@ public class HttpSpider {
 	
 	public void requestPage(String url){
 		Connection con = null;
+		Document document = null;
 		try{
 			con = Jsoup.connect(url);
 			logger.debug("Http爬虫启动---{}",url);
@@ -94,34 +94,37 @@ public class HttpSpider {
 							
 			if(method == null || method.equalsIgnoreCase(GET)){
 				try {
-					Document document = con.get();
-					if(document!=null)
-						page.setDocument(document);
+					document = con.get();
 				} catch (IOException e) {
-					e.printStackTrace();
+					UrlPool.getInstance().updateFailedCount();
+					logger.debug("http request failed{}"+e.getMessage());
 				}
 			}else if(method.equalsIgnoreCase(POST)){
 				try {
-					Document document = con.get();
-					page.setDocument(document);
+					document = con.post();
 				} catch (IOException e) {
-					e.printStackTrace();
+					UrlPool.getInstance().updateFailedCount();
+					logger.debug("http request failed{}"+e.getMessage());
 				}
 			}else{
 				logger.error("不支持的请求类型");
 			}
-			page.setUrl(url);
-			//如果设置了processSpider，则以普通的模式启动
-			if(processSpider != null){
-				processSpider.process(page);
-			}else{
-				//否则将page保存到page pool里
-				processPagePool.push(page);
+			if(document!=null){
+				page.setDocument(document);
+				page.setUrl(url);
+				//如果设置了processSpider，则以普通的模式启动
+				if(processSpider != null){
+					processSpider.process(page);
+				}else{
+					//否则将page保存到page pool里
+					processPagePool.push(page);
+				}
+				UrlPool.getInstance().updateSucceedCount();
+				logger.trace("httpSpider启动");
 			}
-			logger.trace("httpSpider启动");
 		}catch(IllegalArgumentException e){		//URL无效异常
-			errorCount.incrementAndGet();
-			logger.debug("无效或失败链接地址{}",errorCount.get());
+			UrlPool.getInstance().updateFailedCount();
+			logger.debug("无效或失败链接地址{}",url);
 		}
 	}
 }

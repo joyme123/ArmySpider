@@ -21,6 +21,7 @@ public class SecondFilter extends AbstFilterSpider{
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public void filter(Object o) {
+		logger.debug("第二个过滤器启动----{}",(String)o);
 		String url = (String)o;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet get = new HttpGet(url);
@@ -53,13 +54,11 @@ public class SecondFilter extends AbstFilterSpider{
 			is.close();
 			
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
+			logger.debug("data client protocol error,{}",e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("data io error,{}",e.getMessage());
 		}
-		logger.debug("第二个过滤器启动----{}",url);
 		//this.runNext(o);		//启动下一个过滤器
 	}
 

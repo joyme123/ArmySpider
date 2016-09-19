@@ -16,28 +16,34 @@ public class MultiSpiderManager extends AbstSpiderManager{
 	}
 	
 	public static void main(String[] args){
+		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+		System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
+		
 		System.out.println("start");
-		HttpSpiderThreadPool httpSpiderThreadPool = new HttpSpiderThreadPool(5, 10);
+		HttpSpiderThreadPool httpSpiderThreadPool = new HttpSpiderThreadPool(5, 5);
 		httpSpiderThreadPool.setStartUrl("http://wallpaper.pconline.com.cn");
 		
-		ProcessSpiderThreadPool processSpiderThreadPool = new ProcessSpiderThreadPool(5, 10);
+		ProcessSpiderThreadPool processSpiderThreadPool = new ProcessSpiderThreadPool(5, 5);
 		ProcessSpiderConfig processSpiderConfig = new ProcessSpiderConfig();
 		processSpiderConfig.setTargetUrl("http://wallpaper\\.pconline\\.com\\.cn/pic/\\d+.*\\.html");
 		processSpiderConfig.setLimitation("http://wallpaper\\.pconline\\.com\\.cn/.*");
 		processSpiderThreadPool.setProcessSpiderConfig(processSpiderConfig);
 		
-		FilterSpiderThreadPool firstFilterSpiderThreadPool = new FilterSpiderThreadPool(5, 10);
-		firstFilterSpiderThreadPool.setPool(new MultiFilterPagePool());
+		FilterSpiderThreadPool firstFilterSpiderThreadPool = new FilterSpiderThreadPool(5, 5);
+		firstFilterSpiderThreadPool.setPool(MultiFilterPagePool.getInstance());
 		firstFilterSpiderThreadPool.setFilter(new MultiFirstFilter());
 		
-		FilterSpiderThreadPool secondFilterSpiderThreadPool = new FilterSpiderThreadPool(5, 10);
-		secondFilterSpiderThreadPool.setPool(new FilterPool());
+		FilterSpiderThreadPool secondFilterSpiderThreadPool = new FilterSpiderThreadPool(5, 5);
+		secondFilterSpiderThreadPool.setPool(FilterPool.getInstance());
 		secondFilterSpiderThreadPool.setFilter(new SecondFilter());
 		
-		httpSpiderThreadPool.startExecute();
-		processSpiderThreadPool.startExecute();
-		firstFilterSpiderThreadPool.startExecute();
-		secondFilterSpiderThreadPool.startExecute();
+		while(true){
+			httpSpiderThreadPool.startMultiExecute();
+			processSpiderThreadPool.startMultiExecute();
+			firstFilterSpiderThreadPool.startMultiExecute();
+			secondFilterSpiderThreadPool.startMultiExecute();
+		}
 	}
 
 }
