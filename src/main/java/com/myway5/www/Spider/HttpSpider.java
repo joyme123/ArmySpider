@@ -30,19 +30,22 @@ public class HttpSpider {
 	private UrlPool urlPool = UrlPool.getInstance();
 	private MultiProcessPagePool processPagePool = MultiProcessPagePool.getInstance();
 	
-	
-	public void setPrecessSpider(ProcessSpider processSpider){
+	/*设置processSpider*/
+	public void setProcessSpider(ProcessSpider processSpider){
 		this.processSpider = processSpider;
 	}
 	
+	/*设置cookie*/
 	public void setCookies(Map<String,String> cookies){
 		this.cookies = cookies;
 	}
 	
+	/*设置开始url*/
 	public void setStartUrl(String url){
 		urlPool.push(url);
 	}
 	
+	/*设置要发送的数据*/
 	public void setData(Map<String,String> data){
 		this.data = data;
 	}

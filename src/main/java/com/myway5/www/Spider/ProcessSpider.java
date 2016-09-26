@@ -35,6 +35,7 @@ public class ProcessSpider implements IProcessSpider{
 	public void setLimitation(String regex){
 		this.limitation = regex;
 	}
+
 	
 	/*
 	 * ProcessSpider的处理函数，这里进行新的url的发现，并将感兴趣的区域传递给filter进行处理
@@ -47,9 +48,10 @@ public class ProcessSpider implements IProcessSpider{
 		//获取静态的线程池
 		UrlPool urlPool = UrlPool.getInstance();
 		for(Element link : links){
-			String temp = link.attr("href").trim();
-			if(limitation == null || Pattern.matches(limitation, temp))
+			String temp = link.attr("abs:href").trim();			//获取页面的绝对地址
+			if(limitation == null || Pattern.matches(limitation, temp)){
 				urlPool.push(temp);
+			}
 		}
 		//如果对目标地址没有要求或者是需要的地址，才会传递到过滤器中进行处理
 		if(targetUrlRegex == null || Pattern.matches(targetUrlRegex, page.getUrl())){

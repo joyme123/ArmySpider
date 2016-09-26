@@ -1,4 +1,4 @@
-package com.mway5.www.SpiderManager;
+package com.myway5.www.SpiderManager;
 
 import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IFilterSpider;
@@ -20,7 +20,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	public AbstSpiderManager setHttpSpider(HttpSpider httpSpider){
 		this.httpSpider = httpSpider;
 		if(processSpider!=null){
-			this.httpSpider.setPrecessSpider(processSpider);
+			this.httpSpider.setProcessSpider(processSpider);
 		}
 		return this;
 	}

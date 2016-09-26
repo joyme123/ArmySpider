@@ -1,6 +1,9 @@
 package com.myway5.www.ThreadPool;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +23,8 @@ public class HttpSpiderThreadPool{
 	private ProcessSpider processSpider = null;
 	private boolean run = true;
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	private int waitFlag = 0;
+	private volatile int runningThreadCount = 0;
+	//private int waitFlag = 0;
 	
 	public HttpSpiderThreadPool(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,BlockingQueue<Runnable> workQueue) {
 		executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
@@ -51,63 +55,88 @@ public class HttpSpiderThreadPool{
 		this.processSpider = processSpider;
 	}
 	
+	public int getRunningThreadCount() {
+		return runningThreadCount;
+	}
+
+	public void setRunningThreadCount(int runningThreadCount) {
+		this.runningThreadCount = runningThreadCount;
+	}
+
 	public void startExecute(){
 		while(run){
 			if(!urlPool.isEmpty()){
+				
 				final String url = urlPool.pull();
-				executor.execute(new Runnable() {
-					
-					public void run() {
+				runningThreadCount++;		//一条url出栈，则认为当前已经开始提交一项任务（可能立即执行，也可能需要排队）
+				Future<Boolean> future = executor.submit(new Callable<Boolean>() {
+					public Boolean call() throws Exception {
 						HttpSpider httpSpider = new HttpSpider();
 						if(config!=null)
 							httpSpider.setConfig(config);
-						httpSpider.setPrecessSpider(processSpider);
+						httpSpider.setProcessSpider(processSpider);
 						httpSpider.requestPage(url);
+						return true;
 					}
 				});
-			}else{
-				//如果等待3秒，仍然没有新的url加入，就认为任务结束啦
 				try {
-					if(waitFlag == 0){
-						Thread.sleep(3000);
-						waitFlag = 1;
-					}else{
-						run = false;
-						logger.debug("execute finish,progress stop!!!");
+					if(future.get()){
+						//任务执行结束
+						runningThreadCount--;
 					}
 				} catch (InterruptedException e) {
-					logger.debug("执行出错{}",e.getMessage());
+					//线程异常中断，也认为执行结束
+					runningThreadCount--;
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// 执行异常也认为结束
+					runningThreadCount--;
+					e.printStackTrace();
 				}
+			}else if(runningThreadCount == 0){
+				//如果当前正在执行的线程数也为0，则httpSpider的任务结束
+				run = false;
+				//关闭hhtpSpider的线程池
+				executor.shutdown();
 			}
 		}
 	}
 	
-	public void startMultiExecute(){
+	public Boolean startMultiExecute(){
+		boolean run = true;
 		if(!urlPool.isEmpty()){
-				waitFlag = 0;
-				final String url = urlPool.pull();
-				executor.execute(new Runnable() {
-					
-					public void run() {
-						HttpSpider httpSpider = new HttpSpider();
-						if(config!=null)
-							httpSpider.setConfig(config);
-						httpSpider.setPrecessSpider(processSpider);
-						httpSpider.requestPage(url);
-					}
-				});
-//			}else{
-//				//如果等待3秒，仍然没有新的url加入，就认为任务结束啦
-//				try {
-//					if(waitFlag == 0){
-//						Thread.sleep(3000);
-//						waitFlag = 1;
-//					}else{
-//						run = false;
-//					}
-//				} catch (InterruptedException e) {
-//					logger.debug("执行出错{}",e.getMessage());
-//				}
+			final String url = urlPool.pull();
+			Future<Boolean> future = executor.submit(new Callable<Boolean>() {
+				public Boolean call() throws Exception {
+					HttpSpider httpSpider = new HttpSpider();
+					if(config!=null)
+						httpSpider.setConfig(config);
+					httpSpider.setProcessSpider(processSpider);
+					httpSpider.requestPage(url);
+					return true;
+				}
+			});
+			try {
+				if(future.get()){
+					//任务执行结束
+					runningThreadCount--;
+				}
+			} catch (InterruptedException e) {
+				//线程异常中断，也认为执行结束
+				runningThreadCount--;
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// 执行异常也认为结束
+				runningThreadCount--;
+				e.printStackTrace();
 			}
+			return true;
+		}else if(runningThreadCount == 0){
+			//如果当前正在执行的线程数也为0，则httpSpider的任务结束
+			//关闭hhtpSpider的线程池
+			executor.shutdown();
+			run = false;
+		}
+		return run;
 	}
 }
