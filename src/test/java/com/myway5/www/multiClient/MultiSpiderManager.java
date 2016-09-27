@@ -28,7 +28,7 @@ public class MultiSpiderManager extends AbstSpiderManager{
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
 		
 		System.out.println("start");
-		HttpSpiderThreadPool httpSpiderThreadPool = new HttpSpiderThreadPool(5, 5);
+		HttpSpiderThreadPool httpSpiderThreadPool = new HttpSpiderThreadPool(25, 25);
 		httpSpiderThreadPool.setStartUrl("http://wallpaper.pconline.com.cn");
 		
 		ProcessSpiderThreadPool processSpiderThreadPool = new ProcessSpiderThreadPool(5, 5);
@@ -41,12 +41,12 @@ public class MultiSpiderManager extends AbstSpiderManager{
 		firstFilterSpiderThreadPool.setPool(MultiFilterPagePool.getInstance());
 		firstFilterSpiderThreadPool.setFilter(new MultiFirstFilter());
 		
-		FilterSpiderThreadPool secondFilterSpiderThreadPool = new FilterSpiderThreadPool(5, 5);
+		FilterSpiderThreadPool secondFilterSpiderThreadPool = new FilterSpiderThreadPool(25, 25);
 		secondFilterSpiderThreadPool.setPool(FilterPool.getInstance());
-		secondFilterSpiderThreadPool.setFilter(new SecondFilter());
+		secondFilterSpiderThreadPool.setFilter(new MultiSecondFilter());
 		
-		while(http||process||first||second){
-			httpSpiderThreadPool.startMultiExecute();
+		while(http){
+			http = httpSpiderThreadPool.startMultiExecute();
 			processSpiderThreadPool.startMultiExecute();
 			firstFilterSpiderThreadPool.startMultiExecute();
 			secondFilterSpiderThreadPool.startMultiExecute();

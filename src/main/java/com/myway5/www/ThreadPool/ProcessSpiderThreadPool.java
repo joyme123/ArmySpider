@@ -14,7 +14,6 @@ public class ProcessSpiderThreadPool{
 	private ThreadPoolExecutor executor = null;
 	private MultiProcessPagePool multiPagePool = MultiProcessPagePool.getInstance();
 	private ProcessSpiderConfig config = null;		//所有processSpider遵循的配置
-	private volatile int runningThreadCount;
 	
 	public ProcessSpiderThreadPool(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,BlockingQueue<Runnable> workQueue){
 		executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
@@ -37,8 +36,7 @@ public class ProcessSpiderThreadPool{
 		this.config = config;
 	}
 	
-	public Boolean startMultiExecute(){
-		Boolean run = true;
+	public void startMultiExecute(){
 		if(!multiPagePool.isEmpty()){
 			final Page page = (Page) multiPagePool.pull();
 			executor.execute(new Runnable() {
@@ -51,14 +49,7 @@ public class ProcessSpiderThreadPool{
 					processSpider.process(page);
 				}
 			});
-		}else if(runningThreadCount == 0){
-			//如果当前正在执行的线程数也为0，则httpSpider的任务结束
-			//关闭hhtpSpider的线程池
-			executor.shutdown();
-			run = false;
 		}
-		
-		return run;
 	}
 	
 }

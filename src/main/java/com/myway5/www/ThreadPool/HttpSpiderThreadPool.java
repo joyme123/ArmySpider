@@ -133,7 +133,7 @@ public class HttpSpiderThreadPool{
 			return true;
 		}else if(runningThreadCount == 0){
 			//如果当前正在执行的线程数也为0，则httpSpider的任务结束
-			//关闭hhtpSpider的线程池
+			//关闭httpSpider的线程池
 			executor.shutdown();
 			run = false;
 		}

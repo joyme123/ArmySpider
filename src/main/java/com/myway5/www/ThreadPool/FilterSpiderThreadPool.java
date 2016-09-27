@@ -50,37 +50,15 @@ public class FilterSpiderThreadPool{
 		this.runningThreadCount = runningThreadCount;
 	}
 	
-	public Boolean startMultiExecute(){
-		boolean run = true;
+	public void startMultiExecute(){
 		if(!multiPool.isEmpty()){
 			final Object o = multiPool.pull();
-			Future<Boolean> future = executor.submit(new Callable<Boolean>() {
-				public Boolean call() throws Exception {
+			executor.execute(new Runnable() {
+				public void run() {
 					filterSpider.filter(o);
-					return true;
+					
 				}
 			});
-			try {
-				if(future.get()){
-					//任务执行结束
-					runningThreadCount--;
-				}
-			} catch (InterruptedException e) {
-				//线程异常中断，也认为执行结束
-				runningThreadCount--;
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// 执行异常也认为结束
-				runningThreadCount--;
-				e.printStackTrace();
-			}
-		}else if(runningThreadCount == 0){
-			//如果当前正在执行的线程数也为0，则httpSpider的任务结束
-			//关闭hhtpSpider的线程池
-			executor.shutdown();
-			run = false;
 		}
-		
-		return run;
 	}
 }
