@@ -4,7 +4,7 @@ import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IFilterSpider;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.ThreadPool.HttpSpiderThreadPool;
-import com.myway5.www.Urlpool.UrlPool;
+import com.myway5.www.Urlpool.MemoryUrlPool;
 
 public abstract class AbstSpiderManager implements ISpiderManager{
 	private Boolean isFirstFilter = true;
@@ -81,7 +81,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	
 	
 	public AbstSpiderManager setTargetUrl(String url){
-		UrlPool.getInstance().push(url);
+		MemoryUrlPool.getInstance().push(url);
 		return this;
 	}
 	

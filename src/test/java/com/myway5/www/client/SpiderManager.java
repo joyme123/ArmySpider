@@ -44,7 +44,7 @@ public class SpiderManager extends AbstSpiderManager{
 		    		 .thread(5)
 		    		 .run();
 		Date date2 = Calendar.getInstance().getTime();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd HH:ii:ss");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		long stop = Calendar.getInstance().getTimeInMillis();
 		System.out.println("开始时间:" + format.format(date));
 		System.out.println("终止时间:" + format.format(date2));

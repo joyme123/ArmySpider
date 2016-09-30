@@ -2,8 +2,6 @@ package com.myway5.www.Spider;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Pool.MultiProcessPagePool;
-import com.myway5.www.Urlpool.UrlPool;
+import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.HttpSpiderConfig;
 import com.myway5.www.Util.Page;
 
@@ -27,7 +25,7 @@ public class HttpSpider {
 	private Map<String,String> cookies;
 	private int timeout = 3000;//默认3秒，0代表无时间限制
 	private String userAgent;
-	private UrlPool urlPool = UrlPool.getInstance();
+	private MemoryUrlPool urlPool = MemoryUrlPool.getInstance();
 	private MultiProcessPagePool processPagePool = MultiProcessPagePool.getInstance();
 	
 	/*设置processSpider*/
@@ -99,14 +97,14 @@ public class HttpSpider {
 				try {
 					document = con.get();
 				} catch (IOException e) {
-					UrlPool.getInstance().updateFailedCount();
+					MemoryUrlPool.getInstance().updateFailedCount();
 					logger.debug("http request failed{}"+e.getMessage());
 				}
 			}else if(method.equalsIgnoreCase(POST)){
 				try {
 					document = con.post();
 				} catch (IOException e) {
-					UrlPool.getInstance().updateFailedCount();
+					MemoryUrlPool.getInstance().updateFailedCount();
 					logger.debug("http request failed{}"+e.getMessage());
 				}
 			}else{
@@ -122,11 +120,11 @@ public class HttpSpider {
 					//否则将page保存到page pool里
 					processPagePool.push(page);
 				}
-				UrlPool.getInstance().updateSucceedCount();
+				MemoryUrlPool.getInstance().updateSucceedCount();
 				logger.trace("httpSpider启动");
 			}
 		}catch(IllegalArgumentException e){		//URL无效异常
-			UrlPool.getInstance().updateFailedCount();
+			MemoryUrlPool.getInstance().updateFailedCount();
 			logger.debug("无效或失败链接地址{}",url);
 		}
 	}

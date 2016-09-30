@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.ProcessSpider;
-import com.myway5.www.Urlpool.UrlPool;
+import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.HttpSpiderConfig;
 
 public class HttpSpiderThreadPool{
 	private ThreadPoolExecutor executor = null;
-	private UrlPool urlPool = UrlPool.getInstance();
+	private MemoryUrlPool urlPool = MemoryUrlPool.getInstance();
 	private HttpSpiderConfig config = null;
 	private ProcessSpider processSpider = null;
 	private boolean run = true;

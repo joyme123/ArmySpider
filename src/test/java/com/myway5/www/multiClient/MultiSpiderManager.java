@@ -28,7 +28,7 @@ public class MultiSpiderManager extends AbstSpiderManager{
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
 		
 		System.out.println("start");
-		HttpSpiderThreadPool httpSpiderThreadPool = new HttpSpiderThreadPool(25, 25);
+		HttpSpiderThreadPool httpSpiderThreadPool = new HttpSpiderThreadPool(50, 50);
 		httpSpiderThreadPool.setStartUrl("http://wallpaper.pconline.com.cn");
 		
 		ProcessSpiderThreadPool processSpiderThreadPool = new ProcessSpiderThreadPool(5, 5);
@@ -41,7 +41,7 @@ public class MultiSpiderManager extends AbstSpiderManager{
 		firstFilterSpiderThreadPool.setPool(MultiFilterPagePool.getInstance());
 		firstFilterSpiderThreadPool.setFilter(new MultiFirstFilter());
 		
-		FilterSpiderThreadPool secondFilterSpiderThreadPool = new FilterSpiderThreadPool(25, 25);
+		FilterSpiderThreadPool secondFilterSpiderThreadPool = new FilterSpiderThreadPool(50, 50);
 		secondFilterSpiderThreadPool.setPool(FilterPool.getInstance());
 		secondFilterSpiderThreadPool.setFilter(new MultiSecondFilter());
 		
@@ -52,7 +52,7 @@ public class MultiSpiderManager extends AbstSpiderManager{
 			secondFilterSpiderThreadPool.startMultiExecute();
 		}
 		Date date2 = Calendar.getInstance().getTime();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd HH:ii:ss");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		long stop = Calendar.getInstance().getTimeInMillis();
 		System.out.println("开始时间:" + format.format(date));
 		System.out.println("终止时间:" + format.format(date2));
