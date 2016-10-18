@@ -1,4 +1,4 @@
-package com.myway5.www.Urlpool;
+package com.myway5.www.Urlpool.Remover;
 
 /*
  * 定义了去重的接口

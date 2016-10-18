@@ -1,13 +1,13 @@
 package com.myway5.www.Monitor;
 
-import com.myway5.www.Urlpool.MemoryUrlPool;
+import com.myway5.www.Urlpool.AbstUrlPool;
 
 public class MonitorEngine implements MonitorEngineMXBean{
 
-	private MemoryUrlPool urlPool;
-	public MonitorEngine(){
+	private AbstUrlPool urlPool;
+	public MonitorEngine(AbstUrlPool urlPool){
 
-		this.urlPool = MemoryUrlPool.getInstance();
+		this.urlPool = urlPool;
 	}
 	
 	public int getTotalUrlCount() {

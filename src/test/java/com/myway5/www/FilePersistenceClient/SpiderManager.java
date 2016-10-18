@@ -1,16 +1,20 @@
-package com.myway5.www.client;
+package com.myway5.www.FilePersistenceClient;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.concurrent.Callable;
+import java.util.Date;
+
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 import com.myway5.www.Monitor.MonitorEngineAgent;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.SpiderManager.AbstSpiderManager;
-import com.myway5.www.Urlpool.MemoryUrlPool;
+import com.myway5.www.Urlpool.FileUrlPool;
+import com.myway5.www.client.FirstFilter;
+import com.myway5.www.client.SecondFilter;
+import com.sun.org.apache.xml.internal.resolver.helpers.FileURL;
 
-public class SpiderManager extends AbstSpiderManager{
+public class SpiderManager  extends AbstSpiderManager{
 
 	public void manage() {
 		// TODO Auto-generated method stub
@@ -18,8 +22,8 @@ public class SpiderManager extends AbstSpiderManager{
 	}
 	
 	public static void main(String[] args){
-		MemoryUrlPool urlPool = MemoryUrlPool.getInstance();
-		
+		FileUrlPool urlPool = FileUrlPool.getInstance();
+		urlPool.setPath("/home/jiang/spiderFile");
 		Date date = Calendar.getInstance().getTime();
 		long start = Calendar.getInstance().getTimeInMillis();
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
@@ -47,7 +51,6 @@ public class SpiderManager extends AbstSpiderManager{
 		    		 .setProcessSpider(processSpider)
 		    		 .thread(5)
 		    		 .run();
-		
 		Date date2 = Calendar.getInstance().getTime();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		long stop = Calendar.getInstance().getTimeInMillis();
@@ -56,5 +59,4 @@ public class SpiderManager extends AbstSpiderManager{
 		System.out.println("总耗时:" + (stop - start));
 		
 	}
-
 }

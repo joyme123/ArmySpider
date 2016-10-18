@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Pool.MultiProcessPagePool;
+import com.myway5.www.Urlpool.AbstUrlPool;
 import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.HttpSpiderConfig;
 import com.myway5.www.Util.Page;
@@ -25,7 +26,7 @@ public class HttpSpider {
 	private Map<String,String> cookies;
 	private int timeout = 3000;//默认3秒，0代表无时间限制
 	private String userAgent;
-	private MemoryUrlPool urlPool = MemoryUrlPool.getInstance();
+	private AbstUrlPool urlPool;
 	private MultiProcessPagePool processPagePool = MultiProcessPagePool.getInstance();
 	
 	/*设置processSpider*/
@@ -36,6 +37,10 @@ public class HttpSpider {
 	/*设置cookie*/
 	public void setCookies(Map<String,String> cookies){
 		this.cookies = cookies;
+	}
+	
+	public void setUrlPool(AbstUrlPool urlPool){
+		this.urlPool = urlPool;
 	}
 	
 	/*设置开始url*/

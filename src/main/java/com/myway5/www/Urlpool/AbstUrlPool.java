@@ -2,10 +2,13 @@ package com.myway5.www.Urlpool;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.myway5.www.Urlpool.Remover.HashMapDuplicateRemover;
+import com.myway5.www.Urlpool.Remover.IDuplicateUrlRemover;
+
 public abstract class AbstUrlPool implements IUrlPool{
 	private IDuplicateUrlRemover duplicateChecker = new HashMapDuplicateRemover();	//默认使用HashMap来去重
-	protected AtomicInteger totalCount = new AtomicInteger(0);		//url总数量
-	protected AtomicInteger leftUrlCount = new AtomicInteger(0);		//还没执行的url数量
+	protected AtomicInteger totalCount = new AtomicInteger(0);		//url总数量,在子类中需要更新
+	protected AtomicInteger leftUrlCount = new AtomicInteger(0);	//还没执行的url数量，在子类中需要更新
 	private AtomicInteger succeedCount = new AtomicInteger(0);	 	//成功的url数量
 	private AtomicInteger failedCount = new AtomicInteger(0);		//失败的url数量
 	
@@ -48,6 +51,14 @@ public abstract class AbstUrlPool implements IUrlPool{
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * 提供给持久化接口使用，从文件中读入url时维持一个完整的remover
+	 * @param url
+	 */
+	public void pushInRemover(String url){
+		duplicateChecker.isDuplicated(url);
 	}
 	
 	public void push(String url) {

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Pool.MultiFilterPagePool;
+import com.myway5.www.Urlpool.AbstUrlPool;
 import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.Page;
 import com.myway5.www.Util.ProcessSpiderConfig;
@@ -17,6 +18,7 @@ public class ProcessSpider implements IProcessSpider{
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private String targetUrlRegex = null;
 	private String limitation = null;
+	private AbstUrlPool urlPool = null;
 	
 	/*注入FilterSpider以调用*/
 	public void setFilterSpider(IFilterSpider filterSpider){
@@ -36,6 +38,9 @@ public class ProcessSpider implements IProcessSpider{
 		this.limitation = regex;
 	}
 
+	public void setUrlPool(AbstUrlPool urlPool){
+		this.urlPool = urlPool;
+	}
 	
 	/*
 	 * ProcessSpider的处理函数，这里进行新的url的发现，并将感兴趣的区域传递给filter进行处理
@@ -45,8 +50,6 @@ public class ProcessSpider implements IProcessSpider{
 		logger.debug("处理爬虫启动-----{}",page.getUrl());
 		Elements links = page.getDocument().getElementsByTag("a");
 		
-		//获取静态的线程池
-		MemoryUrlPool urlPool = MemoryUrlPool.getInstance();
 		for(Element link : links){
 			String temp = link.attr("abs:href").trim();			//获取页面的绝对地址
 			if(limitation == null || Pattern.matches(limitation, temp)){
