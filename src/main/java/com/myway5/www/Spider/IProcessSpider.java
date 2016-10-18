@@ -8,4 +8,5 @@ public interface IProcessSpider {
 	public void setTargetUrl(String regex);
 	public void setLimitation(String regex);
 	public void process(Page page);
+	public void setFilterSpider(IFilterSpider filterSpider);
 }

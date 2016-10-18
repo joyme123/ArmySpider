@@ -2,6 +2,7 @@ package com.myway5.www.SpiderManager;
 
 import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IFilterSpider;
+import com.myway5.www.Spider.IProcessSpider;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.ThreadPool.HttpSpiderThreadPool;
 import com.myway5.www.Urlpool.MemoryUrlPool;
@@ -9,7 +10,7 @@ import com.myway5.www.Urlpool.MemoryUrlPool;
 public abstract class AbstSpiderManager implements ISpiderManager{
 	private Boolean isFirstFilter = true;
 	protected IFilterSpider preFilterSpider;
-	protected ProcessSpider processSpider;
+	protected IProcessSpider processSpider;
 	protected HttpSpider httpSpider;
 	protected HttpSpiderThreadPool httpSpiderThreadPool;
 	/*
@@ -30,7 +31,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	 * @param processSpider ProcessSpider对象
 	 * @return SpiderManager对象
 	 */
-	public AbstSpiderManager setProcessSpider(ProcessSpider processSpider){
+	public AbstSpiderManager setProcessSpider(IProcessSpider processSpider){
 		this.processSpider = processSpider;
 		if(httpSpiderThreadPool != null){
 			httpSpiderThreadPool.setProcessSpider(processSpider);

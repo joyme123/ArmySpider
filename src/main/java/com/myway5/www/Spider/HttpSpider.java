@@ -18,7 +18,7 @@ public class HttpSpider {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private static String GET = "get";
 	private static String POST = "post";
-	private ProcessSpider processSpider = null;
+	private IProcessSpider processSpider = null;
 	private Page page = new Page();
 	private String method;
 	private Map<String,String> data;
@@ -29,8 +29,8 @@ public class HttpSpider {
 	private MultiProcessPagePool processPagePool = MultiProcessPagePool.getInstance();
 	
 	/*设置processSpider*/
-	public void setProcessSpider(ProcessSpider processSpider){
-		this.processSpider = processSpider;
+	public void setProcessSpider(IProcessSpider processSpider2){
+		this.processSpider = processSpider2;
 	}
 	
 	/*设置cookie*/

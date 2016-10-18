@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Spider.HttpSpider;
+import com.myway5.www.Spider.IProcessSpider;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.HttpSpiderConfig;
@@ -20,7 +21,7 @@ public class HttpSpiderThreadPool{
 	private ThreadPoolExecutor executor = null;
 	private MemoryUrlPool urlPool = MemoryUrlPool.getInstance();
 	private HttpSpiderConfig config = null;
-	private ProcessSpider processSpider = null;
+	private IProcessSpider processSpider = null;
 	private boolean run = true;
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private volatile int runningThreadCount = 0;
@@ -51,7 +52,7 @@ public class HttpSpiderThreadPool{
 		urlPool.push(url);
 	}
 	
-	public void setProcessSpider(ProcessSpider processSpider){
+	public void setProcessSpider(IProcessSpider processSpider){
 		this.processSpider = processSpider;
 	}
 	
