@@ -4,6 +4,7 @@ import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IFilterSpider;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.ThreadPool.HttpSpiderThreadPool;
+import com.myway5.www.Urlpool.AbstUrlPool;
 import com.myway5.www.Urlpool.MemoryUrlPool;
 
 public abstract class AbstSpiderManager implements ISpiderManager{
@@ -12,6 +13,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	protected ProcessSpider processSpider;
 	protected HttpSpider httpSpider;
 	protected HttpSpiderThreadPool httpSpiderThreadPool;
+	protected AbstUrlPool urlPool;				//用来存储url实例的池
 	/*
 	 * 设置进行Http请求的爬虫
 	 * @param httpSpider HttpSpider对象
@@ -55,6 +57,13 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 		return this;
 	}
 	
+	public AbstSpiderManager setUrlPool(AbstUrlPool urlPool){
+		this.urlPool = urlPool;
+		this.httpSpiderThreadPool.setUrlPool(urlPool);
+		this.processSpider.setUrlPool(urlPool);
+		return this;
+	}
+	
 	public AbstSpiderManager thread(int threadNum){
 		httpSpiderThreadPool = new HttpSpiderThreadPool(threadNum, threadNum);
 		if(this.processSpider!=null){
@@ -81,7 +90,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	
 	
 	public AbstSpiderManager setTargetUrl(String url){
-		MemoryUrlPool.getInstance().push(url);
+		this.urlPool.push(url);
 		return this;
 	}
 	

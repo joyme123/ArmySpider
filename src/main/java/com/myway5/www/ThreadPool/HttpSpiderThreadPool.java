@@ -13,12 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.ProcessSpider;
+import com.myway5.www.Urlpool.AbstUrlPool;
 import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.HttpSpiderConfig;
 
 public class HttpSpiderThreadPool{
 	private ThreadPoolExecutor executor = null;
-	private MemoryUrlPool urlPool = MemoryUrlPool.getInstance();
+	private AbstUrlPool urlPool = null;
 	private HttpSpiderConfig config = null;
 	private ProcessSpider processSpider = null;
 	private boolean run = true;
@@ -61,6 +62,10 @@ public class HttpSpiderThreadPool{
 
 	public void setRunningThreadCount(int runningThreadCount) {
 		this.runningThreadCount = runningThreadCount;
+	}
+	
+	public void setUrlPool(AbstUrlPool urlPool){
+		this.urlPool = urlPool;
 	}
 
 	public void startExecute(){
