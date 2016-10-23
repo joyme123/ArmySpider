@@ -42,7 +42,7 @@ public class SpiderManager extends AbstSpiderManager{
 
 		
 		SpiderManager spiderManager = new SpiderManager();
-		spiderManager.setTargetUrl("http://wallpaper.pconline.com.cn")
+		spiderManager.setStartUrl("http://wallpaper.pconline.com.cn")
 					 .setUrlPool(urlPool)
 		    		 .setProcessSpider(processSpider)
 		    		 .thread(5)

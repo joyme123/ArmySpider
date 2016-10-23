@@ -3,6 +3,8 @@ package com.myway5.www.scanTool;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JTextArea;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -15,35 +17,43 @@ import com.myway5.www.Util.Page;
 public class FirstFilter extends AbstFilterSpider{
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private static String base = "http://www.pconline.com.cn/images/html/viewpic_pconline.htm?";
+	private JTextArea area;
+	
+	public FirstFilter(JTextArea area) {
+		this.area = area;
+	}
 	
 	public void filter(Object o) {
 		Page page = (Page)o;
-		Document document = page.getDocument();
+		area.setText(page.getUrl()+"\n"+area.getText());
+		logger.debug("能否注入判断启动");
 		
-		/*获取要下载图片的尺寸*/
-		String size = null;
-		Elements sizes = document.select("div.size > a");
-		for(Element e : sizes){
-			size = e.val();
-		}
+//		Document document = page.getDocument();
 		
-		if(size == null)
-			return;
-		
-		String script = document.data();
-		Pattern pattern = Pattern.compile("var url = '(.*)'\\.replace\\('resolution',seso\\);");
-		Matcher matcher = pattern.matcher(script);
-		
-		StringBuilder urlBuilder = null;
-		if(matcher.find()){
-			urlBuilder = new StringBuilder(matcher.group(1));
-		}
-		
-		String url = urlBuilder.toString();
-		url = url.replace("resolution",size);
-		
-		logger.debug("第一个过滤器启动----{}---{}",page.getUrl(),base+url);
-		this.runNext(url);		//启动下一个过滤器
+//		/*获取要下载图片的尺寸*/
+//		String size = null;
+//		Elements sizes = document.select("div.size > a");
+//		for(Element e : sizes){
+//			size = e.val();
+//		}
+//		
+//		if(size == null)
+//			return;
+//		
+//		String script = document.data();
+//		Pattern pattern = Pattern.compile("var url = '(.*)'\\.replace\\('resolution',seso\\);");
+//		Matcher matcher = pattern.matcher(script);
+//		
+//		StringBuilder urlBuilder = null;
+//		if(matcher.find()){
+//			urlBuilder = new StringBuilder(matcher.group(1));
+//		}
+//		
+//		String url = urlBuilder.toString();
+//		url = url.replace("resolution",size);
+//		
+//		logger.debug("第一个过滤器启动----{}---{}",page.getUrl(),base+url);
+//		this.runNext(url);		//启动下一个过滤器
 	}
 
 }

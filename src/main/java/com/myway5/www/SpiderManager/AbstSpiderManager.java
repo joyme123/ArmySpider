@@ -90,7 +90,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 	}
 	
 	
-	public AbstSpiderManager setTargetUrl(String url){
+	public AbstSpiderManager setStartUrl(String url){
 		this.urlPool.push(url);
 		return this;
 	}

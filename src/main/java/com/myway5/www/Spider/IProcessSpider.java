@@ -1,5 +1,6 @@
 package com.myway5.www.Spider;
 
+import com.myway5.www.Urlpool.AbstUrlPool;
 import com.myway5.www.Util.Page;
 import com.myway5.www.Util.ProcessSpiderConfig;
 
@@ -9,4 +10,5 @@ public interface IProcessSpider {
 	public void setLimitation(String regex);
 	public void process(Page page);
 	public void setFilterSpider(IFilterSpider filterSpider);
+	public void setUrlPool(AbstUrlPool urlPool);
 }

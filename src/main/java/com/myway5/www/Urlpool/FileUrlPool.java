@@ -8,10 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -70,9 +68,12 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	private void readCursor(){
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(path+"cursor.txt"));
-			String line;
+			String line = null;
 			while(( line = reader.readLine())!=null);
-			cursor = new AtomicInteger(Integer.parseInt(line));
+			if(line == null)
+				cursor = new AtomicInteger(0);
+			else
+				cursor = new AtomicInteger(Integer.parseInt(line));
 			reader.close();
 		} catch (FileNotFoundException e) {
 			File file = new File(path+"cursor.txt");
