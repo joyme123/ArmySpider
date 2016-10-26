@@ -17,7 +17,6 @@ import com.sun.org.apache.xml.internal.resolver.helpers.FileURL;
 public class SpiderManager  extends AbstSpiderManager{
 
 	public void manage() {
-		// TODO Auto-generated method stub
 		
 	}
 	

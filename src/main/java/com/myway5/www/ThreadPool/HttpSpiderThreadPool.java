@@ -1,5 +1,6 @@
 package com.myway5.www.ThreadPool;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -71,7 +72,7 @@ public class HttpSpiderThreadPool{
 
 	public void startExecute(){
 		while(run){
-			if(!urlPool.isEmpty()){
+			if(urlPool != null&&!urlPool.isEmpty()){
 				
 				final String url = urlPool.pull();
 				runningThreadCount++;		//一条url出栈，则认为当前已经开始提交一项任务（可能立即执行，也可能需要排队）
@@ -104,6 +105,11 @@ public class HttpSpiderThreadPool{
 				run = false;
 				//关闭hhtpSpider的线程池
 				executor.shutdown();
+				try {
+					urlPool.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -141,6 +147,12 @@ public class HttpSpiderThreadPool{
 			//如果当前正在执行的线程数也为0，则httpSpider的任务结束
 			//关闭httpSpider的线程池
 			executor.shutdown();
+			try {
+				urlPool.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			run = false;
 		}
 		return run;

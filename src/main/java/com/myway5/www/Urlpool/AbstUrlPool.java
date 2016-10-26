@@ -1,5 +1,6 @@
 package com.myway5.www.Urlpool;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.myway5.www.Urlpool.Remover.HashMapDuplicateRemover;
@@ -84,4 +85,19 @@ public abstract class AbstUrlPool implements IUrlPool{
 		return null;
 	}
 	
+	/**
+	 * FileUrlPool需要调用的方法
+	 * @throws IOException
+	 */
+	public void flush(){
+		
+	}
+	
+	/**
+	 * FileUrlPool需要调用的方法
+	 * @throws IOException
+	 */
+	public void close() throws IOException{
+		
+	}
 }

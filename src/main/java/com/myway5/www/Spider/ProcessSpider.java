@@ -1,5 +1,6 @@
 package com.myway5.www.Spider;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Element;
@@ -12,6 +13,7 @@ import com.myway5.www.Urlpool.AbstUrlPool;
 import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.Page;
 import com.myway5.www.Util.ProcessSpiderConfig;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class ProcessSpider implements IProcessSpider{
 	private IFilterSpider filterSpider = null;
@@ -19,7 +21,8 @@ public class ProcessSpider implements IProcessSpider{
 	private String targetUrlRegex = null;
 	private String limitation = null;
 	private AbstUrlPool urlPool = null;
-	
+	private AtomicInteger urlAdded = new AtomicInteger(0);
+	private int urlLimit = 100;		//最多多少url写入一次
 	/*注入FilterSpider以调用*/
 	public void setFilterSpider(IFilterSpider filterSpider){
 		this.filterSpider = filterSpider;
@@ -42,6 +45,10 @@ public class ProcessSpider implements IProcessSpider{
 		this.urlPool = urlPool;
 	}
 	
+	public void setUrlLimit(int urlLimit) {
+		this.urlLimit = urlLimit;
+	}
+
 	/*
 	 * ProcessSpider的处理函数，这里进行新的url的发现，并将感兴趣的区域传递给filter进行处理
 	 * @param Page 可以通过HttpSpider获取到的Page对象直接传递过来（普通模式)，也可以在ProcessSpiderThreadPool中传递(多线程组合模式)
@@ -54,6 +61,10 @@ public class ProcessSpider implements IProcessSpider{
 			String temp = link.attr("abs:href").trim();			//获取页面的绝对地址
 			if(limitation == null || Pattern.matches(limitation, temp)){
 				urlPool.push(temp);
+				int count = urlAdded.incrementAndGet();
+				if(count >= urlLimit){
+					urlPool.flush(); 		//如果这个urlPool是可持久化的，将在urlPool中的数据写入文件
+				}
 			}
 		}
 		//如果对目标地址没有要求或者是需要的地址，才会传递到过滤器中进行处理

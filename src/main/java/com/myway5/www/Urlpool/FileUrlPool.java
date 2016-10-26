@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.swing.internal.plaf.metal.resources.metal_zh_TW;
+
 
 
 public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
@@ -66,8 +68,16 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	 * 读入游标
 	 */
 	private void readCursor(){
+		File file = new File(path+"cursor.txt");
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+			} catch (IOException e1) {
+				logger.error("文件创建失败:{}",e1.getMessage());
+			}
+		}
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(path+"cursor.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line = null;
 			while(( line = reader.readLine())!=null);
 			if(line == null)
@@ -76,12 +86,6 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 				cursor = new AtomicInteger(Integer.parseInt(line));
 			reader.close();
 		} catch (FileNotFoundException e) {
-			File file = new File(path+"cursor.txt");
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				logger.error("文件创建失败:{}",e1.getMessage());
-			}
 			logger.debug("文件不存在，创建文件:{}",e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -93,13 +97,19 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	 * 从Path中读取Url
 	 */
 	private void readUrl(){
+		File file = new File(path+"url.txt");
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+			} catch (IOException e1) {
+				logger.error("url.txt创建失败:{}",e1.getMessage());
+			}
+		}
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(path+"url.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
 			int lineNum = 0;
 			if(cursor == null){						//如果游标为空，则重新创建url.txt
-				File file = new File(path+"url.txt");
-				file.createNewFile();
 				cursor = new AtomicInteger(0);
 			}else{
 				while((line = reader.readLine())!=null){
@@ -112,13 +122,7 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 			}
 			reader.close();
 		} catch (FileNotFoundException e) {
-			File file = new File(path+"url.txt");
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				logger.error("url.txt创建失败:{}",e1.getMessage());
-			}
-			logger.debug("url.txt不存在,重新创建:{}",e.getMessage());
+			logger.debug("url.txt不存在:{}",e.getMessage());
 		} catch (IOException e) {
 			logger.debug("url.txt读取异常:{}",e.getMessage());
 		}
@@ -134,10 +138,14 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 			this.path = path;
 		else
 			this.path = path+File.separator;
+		File tmp = new File(this.path);
+		if(!tmp.exists()){
+			tmp.mkdirs();		//如果当前路径不存在，就创建它
+		}
 		try {
 			readFile(); 		//从文件中读入数据，如果不存在则创建他们
 			
-			urlWriter = new BufferedWriter(new FileWriter(path+"url.txt"));		//获取url写对象
+			urlWriter = new BufferedWriter(new FileWriter(this.path+"url.txt"));		//获取url写对象
 			cursorWriter = new BufferedWriter(new FileWriter(this.path+"cursor.txt"));//获取cursor写对象
 			
 			flush();
@@ -149,27 +157,20 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	/**
 	 * 将当前缓存写入文件
 	 */
-	public void flush() {
-		Runnable runnable = new Runnable(){
-
-			public void run() {
-				try {
-					urlWriter.flush();
-					cursorWriter.flush();
-				} catch (IOException e) {
-					logger.error("文件写入异常"+e.getMessage());
-				}
-			}
-		};
-		service = Executors.newSingleThreadScheduledExecutor();
-		service.scheduleAtFixedRate(runnable, 10, 10, TimeUnit.MILLISECONDS);
+	synchronized public void flush() {
+		try {
+			urlWriter.flush();
+			cursorWriter.flush();
+		} catch (IOException e) {
+			logger.error("持久化写入异常");
+		}
 	}
 
 	@Override
 	public void pushWithoutDuplicate(String url) {
 		urlQueue.offer(url);
 		try {
-			urlWriter.append(url);
+			urlWriter.append(url+"\n");
 		} catch (IOException e) {
 			logger.error("入栈IO异常:{}",e.getMessage());
 		}
@@ -180,7 +181,12 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	@Override
 	public String pull() {
 		leftUrlCount.decrementAndGet();
-		cursor.incrementAndGet();
+		int n = cursor.incrementAndGet();
+		try {
+			cursorWriter.append(String.valueOf(n)+"\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return urlQueue.poll();
 	}
 	
@@ -191,6 +197,5 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	public void close() throws IOException{
 		urlWriter.close();
 		cursorWriter.close();
-		service.shutdown();
 	}
 }

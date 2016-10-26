@@ -1,5 +1,6 @@
 package com.myway5.www.Urlpool;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,5 +49,13 @@ public class MemoryUrlPool extends AbstUrlPool{
 	public String pull() {
 		leftUrlCount.decrementAndGet();
 		return urlQueue.poll();
+	}
+
+	/**
+	 * 针对FileUrlPool的方法，这里不需要实现
+	 */
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }
