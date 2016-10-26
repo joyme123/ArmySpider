@@ -69,11 +69,13 @@ public class HttpSpiderThreadPool{
 	public void setUrlPool(AbstUrlPool urlPool){
 		this.urlPool = urlPool;
 	}
-
+	
 	public void startExecute(){
 		while(run){
 			if(urlPool != null&&!urlPool.isEmpty()){
-				
+				//TODO urlPool为redis数据库时，
+				//第二次执行时totalUrlCount和leftUrlCount没有实时更新
+				//导致无法执行
 				final String url = urlPool.pull();
 				runningThreadCount++;		//一条url出栈，则认为当前已经开始提交一项任务（可能立即执行，也可能需要排队）
 				Future<Boolean> future = executor.submit(new Callable<Boolean>() {

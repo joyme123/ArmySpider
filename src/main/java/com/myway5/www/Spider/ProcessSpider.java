@@ -22,7 +22,6 @@ public class ProcessSpider implements IProcessSpider{
 	private String limitation = null;
 	private AbstUrlPool urlPool = null;
 	private AtomicInteger urlAdded = new AtomicInteger(0);
-	private int urlLimit = 100;		//最多多少url写入一次
 	/*注入FilterSpider以调用*/
 	public void setFilterSpider(IFilterSpider filterSpider){
 		this.filterSpider = filterSpider;
@@ -44,10 +43,6 @@ public class ProcessSpider implements IProcessSpider{
 	public void setUrlPool(AbstUrlPool urlPool){
 		this.urlPool = urlPool;
 	}
-	
-	public void setUrlLimit(int urlLimit) {
-		this.urlLimit = urlLimit;
-	}
 
 	/*
 	 * ProcessSpider的处理函数，这里进行新的url的发现，并将感兴趣的区域传递给filter进行处理
@@ -56,14 +51,14 @@ public class ProcessSpider implements IProcessSpider{
 	public void process(Page page){
 		logger.debug("处理爬虫启动-----{}",page.getUrl());
 		Elements links = page.getDocument().getElementsByTag("a");
-		
+		int limit = urlPool.getUrlWriteCount();
 		for(Element link : links){
 			String temp = link.attr("abs:href").trim();			//获取页面的绝对地址
 			if(limitation == null || Pattern.matches(limitation, temp)){
 				urlPool.push(temp);
 				int count = urlAdded.incrementAndGet();
-				if(count >= urlLimit){
-					urlPool.flush(); 		//如果这个urlPool是可持久化的，将在urlPool中的数据写入文件
+				if(count >=  limit && limit != 0){
+					urlPool.flush(); 		//这个urlPool是可持久化的，将在urlPool中的数据写入文件
 				}
 			}
 		}

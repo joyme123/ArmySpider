@@ -17,7 +17,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.swing.internal.plaf.metal.resources.metal_zh_TW;
-
+/**
+ * 提供了url的持久化存储，其中有两个关键的变量
+ * cursor指向当前执行到的url的位置,读取和写入cursor.txt进行更新和保存
+ * urlQueue用来保存所有的url,读取和写入url.txt进行更新和保存
+ * 其他变量:
+ * urlWriter用来写入url
+ * cursor用来写入cursor
+ * 
+ * @author jiang
+ *
+ */
 
 
 public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
@@ -28,6 +38,7 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	private BufferedWriter urlWriter;			//线程安全
 	private BufferedWriter cursorWriter;		//线程安全
 	private AtomicInteger cursor;				//线程安全
+	private int urlWriteCount = 150;			//url获取到多少条时写入
 	private String path = System.getProperty("user.dir");
 	/**
 	 * 私有的构造方法，用来在类初始化时默认执行一些操作
@@ -50,6 +61,14 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	
 	private static class UrlPoolHolder{
 		public static FileUrlPool urlPool = new FileUrlPool();
+	}
+	
+	public void setUrlWriteCount(int num){
+		this.urlWriteCount = num;
+	}
+	
+	public int getUrlWriteCount(){
+		return this.urlWriteCount;
 	}
 	/**
 	 * 多线程环境下创建安全

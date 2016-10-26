@@ -94,6 +94,15 @@ public abstract class AbstUrlPool implements IUrlPool{
 	}
 	
 	/**
+	 * 在使用FileUrlPool时通过这个函数获取一次写入的url条数
+	 * 为0时表示不是使用的该类
+	 * @return
+	 */
+	public int getUrlWriteCount(){
+		return 0;
+	}
+	
+	/**
 	 * FileUrlPool需要调用的方法
 	 * @throws IOException
 	 */
