@@ -24,12 +24,11 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private static FileUrlPool urlPool = null;
-	private ConcurrentLinkedQueue<String> urlQueue = new ConcurrentLinkedQueue<String>();
-	private BufferedWriter urlWriter;
-	private BufferedWriter cursorWriter;
-	private AtomicInteger cursor;
+	private ConcurrentLinkedQueue<String> urlQueue = new ConcurrentLinkedQueue<String>();	//线程安全
+	private BufferedWriter urlWriter;			//线程安全
+	private BufferedWriter cursorWriter;		//线程安全
+	private AtomicInteger cursor;				//线程安全
 	private String path = System.getProperty("user.dir");
-	private ScheduledExecutorService service;
 	/**
 	 * 私有的构造方法，用来在类初始化时默认执行一些操作
 	 */
@@ -38,6 +37,7 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	}
 	
 	/**
+	 * 同时有多个线程实例化时会出问题
 	 * 没有进行同步操作，因此多线程环境下创建谨慎使用
 	 * @return
 	 */
@@ -79,11 +79,12 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line = null;
-			while(( line = reader.readLine())!=null);
-			if(line == null)
-				cursor = new AtomicInteger(0);
-			else
-				cursor = new AtomicInteger(Integer.parseInt(line));
+			int num = 0;
+			while(( line = reader.readLine())!=null){
+				num = Integer.parseInt(line);
+			}
+			cursor = new AtomicInteger(num);
+			logger.debug(String.valueOf(cursor));
 			reader.close();
 		} catch (FileNotFoundException e) {
 			logger.debug("文件不存在，创建文件:{}",e.getMessage());
@@ -109,15 +110,22 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
 			int lineNum = 0;
-			if(cursor == null){						//如果游标为空，则重新创建url.txt
+			int pos = 0;
+			if(cursor == null){
 				cursor = new AtomicInteger(0);
 			}else{
+				pos = cursor.get();
+				urlQueue.clear(); 		//因为这里是存持久化文件记录中读取，所以先清空urlQueue
 				while((line = reader.readLine())!=null){
-					if(lineNum >= cursor.get()){
+					if(lineNum >= pos){
 						urlQueue.offer(line);		//找到未处理的url行，读入队列
+						totalCount.incrementAndGet();
+						leftUrlCount.incrementAndGet();
 					}else{
 						pushInRemover(line); 		//已经处理的url行也要读入，来维持完整的remover
+						totalCount.incrementAndGet();
 					}
+					lineNum++;
 				}
 			}
 			reader.close();
@@ -145,10 +153,9 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 		try {
 			readFile(); 		//从文件中读入数据，如果不存在则创建他们
 			
-			urlWriter = new BufferedWriter(new FileWriter(this.path+"url.txt"));		//获取url写对象
-			cursorWriter = new BufferedWriter(new FileWriter(this.path+"cursor.txt"));//获取cursor写对象
+			urlWriter = new BufferedWriter(new FileWriter(this.path+"url.txt",true));		//获取url写对象
+			cursorWriter = new BufferedWriter(new FileWriter(this.path+"cursor.txt",true));//获取cursor写对象
 			
-			flush();
 		} catch (IOException e) {
 			logger.error("url或者cursor.txt读取异常:{}",e.getMessage());
 		}
