@@ -1,7 +1,11 @@
 package com.myway5.www.scanTool;
 
 import java.util.Date;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -11,11 +15,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 import com.myway5.www.Monitor.MonitorEngineAgent;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.SpiderManager.AbstSpiderManager;
 import com.myway5.www.Urlpool.FileUrlPool;
+import com.sun.swing.internal.plaf.metal.resources.metal_zh_TW;
 
 public class Scan extends AbstSpiderManager{
 
@@ -26,30 +32,50 @@ public class Scan extends AbstSpiderManager{
 	
 	public static void init(){
 		JFrame frame = new JFrame();
-		frame.setLayout(new FlowLayout(20, 20, 20));
+		frame.setLayout(new FlowLayout());
 		
 		JLabel urlLabel = new JLabel("站点url");
 		final JTextField urlField = new JTextField(30);
-		urlField.setText("http://www.ahchsz.com/");
+		//urlField.setText("http://localhost:8080/sql/Less-1/");
+		urlField.setText("http://www.gxcme.edu.cn/");
 		
 		JLabel limitLabel = new JLabel("限制正则");
 		final JTextField limitField = new JTextField(30);
-		limitField.setText("http://.*\\.ahchsz\\.com/.*");
+		//limitField.setText("http://localhost:8080/.*");
+		limitField.setText("http://.*.gxcme.edu.cn/.*");
 		
 		JLabel threadLable = new JLabel("开启线程数");
 		final JTextField threadField = new JTextField(4);
+		threadField.setText("5");
+		
 		JButton button = new JButton("开始抓取");
-		final JTextArea area = new JTextArea(20, 20);
+		button.setPreferredSize(new Dimension(160, 80));
+		button.setFont(new Font("幼圆", 1, 20));
+		
+		//正常网页
+		final JTextPane area = new JTextPane();
 		area.setAutoscrolls(true);
+		area.setForeground(Color.BLUE);
+		area.setEditable(false); // 不可录入
+		area.setPreferredSize(new Dimension(460, 300));
+		
+		//可注入网页
+		final JTextPane badArea = new JTextPane();
+		badArea.setAutoscrolls(true);
+		badArea.setForeground(Color.RED);
+		badArea.setEditable(false); // 不可录入
+		badArea.setPreferredSize(new Dimension(460, 300));
+		
 		frame.add(urlLabel);
 		frame.add(urlField);
 		frame.add(limitLabel);
 		frame.add(limitField);
 		frame.add(threadLable);
 		frame.add(threadField);
-		frame.add(button);
 		frame.add(area);
-		frame.setBounds(40, 40, 500, 500);
+		frame.add(badArea);
+		frame.add(button);
+		frame.setBounds(40, 40, 1000, 500);
 		frame.setVisible(true);
 		
 		button.addActionListener(new ActionListener() {
@@ -63,7 +89,7 @@ public class Scan extends AbstSpiderManager{
 				new Thread(new Runnable() {
 					
 					public void run() {
-						start(startUrl, limit, threadNum,area);
+						start(startUrl, limit, threadNum,area,badArea);
 						
 					}
 				}).start();
@@ -72,7 +98,7 @@ public class Scan extends AbstSpiderManager{
 		});
 	}	
 	
-	public static void start(String startUrl,String limit,int threadNum,JTextArea area){
+	public static void start(String startUrl,String limit,int threadNum,JTextPane area,JTextPane badArea){
 		Date date = Calendar.getInstance().getTime();
 		long start = Calendar.getInstance().getTimeInMillis();
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
@@ -84,7 +110,7 @@ public class Scan extends AbstSpiderManager{
 		urlPool.setPath("D:\\spiderFile");
 		new MonitorEngineAgent(urlPool).start();
 		System.out.println("start");
-		FirstFilter firstFilter = new FirstFilter(area);
+		FirstFilter firstFilter = new FirstFilter(area,badArea);
 		SecondFilter secondFilter = new SecondFilter();
 		firstFilter.setNextFilter(secondFilter);
 		

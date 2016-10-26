@@ -1,10 +1,16 @@
 package com.myway5.www.scanTool;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
+import org.jsoup.Connection;
+import org.jsoup.Connection.Response;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -17,15 +23,52 @@ import com.myway5.www.Util.Page;
 public class FirstFilter extends AbstFilterSpider{
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private static String base = "http://www.pconline.com.cn/images/html/viewpic_pconline.htm?";
-	private JTextArea area;
+	private JTextPane area;
+	private JTextPane badArea;
 	
-	public FirstFilter(JTextArea area) {
+	public FirstFilter(JTextPane area,JTextPane badArea) {
 		this.area = area;
+		this.badArea = badArea;
+	}
+	
+	public String urlFormat(String url){
+		String[] string = url.split("\\?");
+		String[] param = string[1].split("&");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("?");
+		int i = 0;
+		for(String s : param){
+			if(i == 0){
+				buffer.append(s+"'");
+				i++;
+			}else{
+				buffer.append("&"+s+"'");
+			}
+		}
+		return string[0]+buffer.toString();
 	}
 	
 	public void filter(Object o) {
 		Page page = (Page)o;
-		area.setText(page.getUrl()+"\n"+area.getText());
+		String url = "";
+		if(page.getUrl().contains("?")){
+			url = urlFormat(page.getUrl());
+		}else{
+			url = page.getUrl()+"?id=1'";
+		}
+		Connection jsoup = Jsoup.connect(url);
+		try {
+			Response response = jsoup.execute();
+			if(response.body().contains("SQL")){
+				badArea.setText(url+"         可注入\n"+badArea.getText());
+			}else{
+				area.setText(url+"        不可注入\n"+area.getText());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		logger.debug("能否注入判断启动");
 		
 //		Document document = page.getDocument();
