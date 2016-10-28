@@ -4,15 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.omg.CORBA.PRIVATE_MEMBER;
-
 import com.myway5.www.Monitor.MonitorEngineAgent;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.SpiderManager.AbstSpiderManager;
 import com.myway5.www.Urlpool.FileUrlPool;
 import com.myway5.www.client.FirstFilter;
 import com.myway5.www.client.SecondFilter;
-import com.sun.org.apache.xml.internal.resolver.helpers.FileURL;
 
 public class SpiderManager  extends AbstSpiderManager{
 

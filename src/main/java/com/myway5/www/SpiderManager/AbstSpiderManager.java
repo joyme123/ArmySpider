@@ -77,6 +77,7 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 		if(urlQueue == null)
 			urlQueue = new LinkedList<String>();
 		urlQueue.add(url);
+		waitForReady();
 		return this;
 	}
 	
@@ -85,12 +86,13 @@ public abstract class AbstSpiderManager implements ISpiderManager{
 		   urlQueue != null&&
 		   httpSpiderThreadPool != null&&
 		   processSpider != null){
-			httpSpiderThreadPool.setUrlPool(urlPool);
-			httpSpiderThreadPool.setProcessSpider(processSpider);
 			/**填充urlPool**/
 			for(String url : urlQueue){
 				urlPool.push(url);
 			}
+			
+			httpSpiderThreadPool.setUrlPool(urlPool);
+			httpSpiderThreadPool.setProcessSpider(processSpider);
 			
 			//设置processSpider的属性
 			processSpider.setUrlPool(urlPool);

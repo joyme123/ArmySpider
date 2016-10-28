@@ -107,12 +107,10 @@ public class Scan extends AbstSpiderManager{
 		
 		//使用文件实现持久化存储
 		FileUrlPool urlPool = FileUrlPool.getInstance();
-		urlPool.setPath("D:\\spiderFile");
+		urlPool.setPath("/home/jiang/spiderFile");
 		new MonitorEngineAgent(urlPool).start();
 		System.out.println("start");
 		FirstFilter firstFilter = new FirstFilter(area,badArea);
-		SecondFilter secondFilter = new SecondFilter();
-		firstFilter.setNextFilter(secondFilter);
 		
 		
 		ProcessSpider processSpider = new ProcessSpider();			//不设置targetUrl则会将所有的url加入url队列中
@@ -120,13 +118,12 @@ public class Scan extends AbstSpiderManager{
 		processSpider.setFilterSpider(firstFilter);
 		
 
-		threadNum = 5;			//开启5个线程
 		Scan scan = new Scan();
 					
 		scan.setProcessSpider(processSpider)
-		    		 .thread(threadNum)
-		    		 .setUrlPool(urlPool)
 		    		 .setStartUrl(startUrl)	//"http://www.dhu.edu.cn"
+		    		 .setUrlPool(urlPool)
+		    		 .thread(threadNum)
 		    		 .run();
 		Date date2 = Calendar.getInstance().getTime();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
