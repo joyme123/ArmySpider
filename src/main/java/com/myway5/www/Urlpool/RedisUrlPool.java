@@ -21,9 +21,11 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 	private JedisPool jedisPool;
 	private static RedisUrlPool urlPool;
+	private static boolean empty;
 	
 	private RedisUrlPool(String host,int port){
 		jedisPool = new JedisPool(new JedisPoolConfig(),host,port);
+		empty = false;
 	}
 	
 	public static RedisUrlPool getInstance(String host,int port){
@@ -53,6 +55,7 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 				jedis.rpush("leftList", url);
 				totalCount.incrementAndGet();
 				leftUrlCount.incrementAndGet();
+				empty = false;
 			}
 		} catch (Exception e) {  
             e.printStackTrace();  
@@ -70,7 +73,11 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 		try{
 			jedis = jedisPool.getResource();
 			url = jedis.lpop("leftList");
-			leftUrlCount.decrementAndGet();
+			if(!url.equals("nil"))
+				leftUrlCount.decrementAndGet();
+			else{
+				empty = true;
+			}
 		} catch (Exception e) {  
             e.printStackTrace();  
         } finally {  
@@ -82,6 +89,16 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 		return url;
 	}
 	
+	
+	/*
+	 * 重写isEmpty()
+	 * @see com.myway5.www.Urlpool.AbstUrlPool#isEmpty()
+	 */
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return empty;
+	}
 
 	/**
 	 * 释放redis的资源
