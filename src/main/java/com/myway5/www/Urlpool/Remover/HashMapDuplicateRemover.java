@@ -13,7 +13,7 @@ public class HashMapDuplicateRemover implements IDuplicateUrlRemover{
 		return true;
 	}
 
-	public int getTotalUrlCount() {
+	public long getTotalUrlCount() {
 		return urls.size();
 	}
 

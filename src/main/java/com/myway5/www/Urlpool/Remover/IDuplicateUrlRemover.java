@@ -11,5 +11,5 @@ public interface IDuplicateUrlRemover {
 	 */
 	public Boolean isDuplicated(String url);
 	
-	public int getTotalUrlCount();
+	public long getTotalUrlCount();
 }

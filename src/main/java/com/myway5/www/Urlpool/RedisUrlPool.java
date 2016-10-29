@@ -51,14 +51,22 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 		}
 	}
 	
-	synchronized public void push(String url){
+	
+
+	@Override
+	public void pushWithoutDuplicate(String url) {
+		
+	}
+	/**
+	 * 使用redis数据库时会自动对插入的url进行去重，所以这里直接重写父类的push方法即可
+	 */
+	 public void push(String url){
 		Jedis jedis = null;
 		try{
 			jedis = jedisPool.getResource();
 			if(!jedis.sismember("totalSet", url)){
 				jedis.sadd("totalSet", url);		//如果不存在，就加入
 				jedis.rpush("leftList", url);
-				totalCount.incrementAndGet();
 				leftUrlCount.incrementAndGet();
 				empty = false;
 			}
@@ -72,16 +80,17 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
         }  
 	}
 	
-	synchronized public String pull(){
+
+	@Override
+	synchronized public String pullWithoutUpdateLeftUrlCount() {
 		Jedis jedis = null;
 		String url = null;
 		try{
 			jedis = jedisPool.getResource();
 			url = jedis.lpop("leftList");
-			if(!url.equals("nil"))
-				leftUrlCount.decrementAndGet();
-			else{
+			if(url.equals("nil")){
 				empty = true;
+				return null;
 			}
 		} catch (Exception e) {  
             e.printStackTrace();  
@@ -111,5 +120,4 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 	public void close() throws IOException {
 		 jedisPool.destroy(); 
 	}
-
 }

@@ -139,12 +139,9 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 				while((line = reader.readLine())!=null){
 					if(lineNum >= pos){
 						urlQueue.offer(line);		//找到未处理的url行，读入队列
-						totalCount.incrementAndGet();
 						leftUrlCount.incrementAndGet();
-					}else{
-						pushInRemover(line); 		//已经处理的url行也要读入，来维持完整的remover
-						totalCount.incrementAndGet();
 					}
+					pushInRemover(line); 		//所有url行都要读入来维持完整的remover
 					lineNum++;
 				}
 			}
@@ -201,13 +198,10 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 		} catch (IOException e) {
 			logger.error("入栈IO异常:{}",e.getMessage());
 		}
-		totalCount.incrementAndGet();
-		leftUrlCount.incrementAndGet();
 	}
-
+	
 	@Override
-	public String pull() {
-		leftUrlCount.decrementAndGet();
+	public String pullWithoutUpdateLeftUrlCount() {
 		int n = cursor.incrementAndGet();
 		try {
 			cursorWriter.append(String.valueOf(n)+"\n");

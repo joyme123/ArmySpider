@@ -8,7 +8,7 @@ import com.myway5.www.Urlpool.Remover.IDuplicateUrlRemover;
 
 public abstract class AbstUrlPool implements IUrlPool{
 	private IDuplicateUrlRemover duplicateChecker = new HashMapDuplicateRemover();	//默认使用HashMap来去重
-	protected AtomicInteger totalCount = new AtomicInteger(0);		//url总数量,在子类中需要更新
+	protected AtomicInteger totalCount = new AtomicInteger(0);		//url总数量,不需要在子类中更新
 	protected AtomicInteger leftUrlCount = new AtomicInteger(0);	//还没执行的url数量，在子类中需要更新
 	private AtomicInteger succeedCount = new AtomicInteger(0);	 	//成功的url数量
 	private AtomicInteger failedCount = new AtomicInteger(0);		//失败的url数量
@@ -39,10 +39,17 @@ public abstract class AbstUrlPool implements IUrlPool{
 		failedCount.incrementAndGet();
 	}
 	
-	public int getTotalUrlCount(){
+	public long getTotalUrlCount(){
 		return duplicateChecker.getTotalUrlCount();
 	}
 	
+	/**
+	 * 设置默认的removeChecker
+	 * @param remover
+	 */
+	public void setDuplicateChecker(IDuplicateUrlRemover duplicateChecker){
+		this.duplicateChecker = duplicateChecker;
+	}
 	/**
 	 * 判断url池是否为空，如果为空则返回true,否则返回false
 	 * @return boolean
@@ -66,24 +73,26 @@ public abstract class AbstUrlPool implements IUrlPool{
 		if(!duplicateChecker.isDuplicated(url)){
 			//不重复的url
 			pushWithoutDuplicate(url);
+			leftUrlCount.incrementAndGet();		//添加结束后leftUrlCount要自增
 		}
 	}
 
 	/*
 	 * 需要自己实现的方法
 	 */
-	public void pushWithoutDuplicate(String url){
-		
-	}
+	public abstract void pushWithoutDuplicate(String url);
 
 
-	/*
-	 * 需要自己实现的方法
-	 * @see com.myway5.www.Urlpool.IUrlPool#pull()
-	 */
+
 	public String pull() {
-		return null;
+		String string = pullWithoutUpdateLeftUrlCount();
+		if(string != null){
+			leftUrlCount.decrementAndGet();
+		}
+		return string;
 	}
+	
+	public abstract String pullWithoutUpdateLeftUrlCount();
 	
 	/**
 	 * FileUrlPool需要调用的方法

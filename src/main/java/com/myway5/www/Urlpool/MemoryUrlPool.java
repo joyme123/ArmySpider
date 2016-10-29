@@ -42,16 +42,14 @@ public class MemoryUrlPool extends AbstUrlPool{
 	@Override
 	public void pushWithoutDuplicate(String url) {
 		urlQueue.offer(url);
-		totalCount.incrementAndGet();		//更新总数
 		leftUrlCount.incrementAndGet();		//更新剩余数
 	}
 
 	@Override
-	public String pull() {
-		leftUrlCount.decrementAndGet();
+	public String pullWithoutUpdateLeftUrlCount() {
 		return urlQueue.poll();
 	}
-
+	
 	/**
 	 * 针对FileUrlPool的方法，这里不需要实现
 	 */
@@ -59,4 +57,5 @@ public class MemoryUrlPool extends AbstUrlPool{
 		// TODO Auto-generated method stub
 		
 	}
+
 }
