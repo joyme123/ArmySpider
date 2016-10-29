@@ -16,9 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IProcessSpider;
-import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.Urlpool.AbstUrlPool;
-import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.HttpSpiderConfig;
 
 public class HttpSpiderThreadPool{

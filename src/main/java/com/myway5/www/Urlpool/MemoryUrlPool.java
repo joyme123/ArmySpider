@@ -2,9 +2,6 @@ package com.myway5.www.Urlpool;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.sun.org.apache.bcel.internal.generic.NEW;
 /*
  * url地址池，保存url，单例模式
  * 

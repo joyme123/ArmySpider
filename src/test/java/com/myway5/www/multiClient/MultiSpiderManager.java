@@ -10,7 +10,6 @@ import com.myway5.www.ThreadPool.FilterSpiderThreadPool;
 import com.myway5.www.ThreadPool.HttpSpiderThreadPool;
 import com.myway5.www.ThreadPool.ProcessSpiderThreadPool;
 import com.myway5.www.Util.ProcessSpiderConfig;
-import com.myway5.www.client.SecondFilter;
 
 public class MultiSpiderManager extends AbstSpiderManager{
 	
@@ -22,7 +21,7 @@ public class MultiSpiderManager extends AbstSpiderManager{
 	public static void main(String[] args){
 		Date date = Calendar.getInstance().getTime();
 		long start = Calendar.getInstance().getTimeInMillis();
-		boolean http = true,process = true,first = true,second = true;
+		boolean http = true;
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
 		System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");

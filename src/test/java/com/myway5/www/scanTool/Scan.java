@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -13,7 +12,6 @@ import java.util.Calendar;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
@@ -21,7 +19,6 @@ import com.myway5.www.Monitor.MonitorEngineAgent;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.SpiderManager.AbstSpiderManager;
 import com.myway5.www.Urlpool.FileUrlPool;
-import com.sun.swing.internal.plaf.metal.resources.metal_zh_TW;
 
 public class Scan extends AbstSpiderManager{
 

@@ -1,19 +1,11 @@
 package com.myway5.www.scanTool;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 
 import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +14,6 @@ import com.myway5.www.Util.Page;
 
 public class FirstFilter extends AbstFilterSpider{
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	private static String base = "http://www.pconline.com.cn/images/html/viewpic_pconline.htm?";
 	private JTextPane area;
 	private JTextPane badArea;
 	

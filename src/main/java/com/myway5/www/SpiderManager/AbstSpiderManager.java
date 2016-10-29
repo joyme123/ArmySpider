@@ -3,13 +3,10 @@ package com.myway5.www.SpiderManager;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.myway5.www.Spider.HttpSpider;
 import com.myway5.www.Spider.IFilterSpider;
 import com.myway5.www.Spider.IProcessSpider;
-import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.ThreadPool.HttpSpiderThreadPool;
 import com.myway5.www.Urlpool.AbstUrlPool;
-import com.myway5.www.Urlpool.MemoryUrlPool;
 
 public abstract class AbstSpiderManager implements ISpiderManager{
 	private Boolean isFirstFilter = true;

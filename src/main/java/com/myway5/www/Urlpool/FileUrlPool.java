@@ -8,15 +8,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.swing.internal.plaf.metal.resources.metal_zh_TW;
 /**
  * 提供了url的持久化存储，其中有两个关键的变量
  * cursor指向当前执行到的url的位置,读取和写入cursor.txt进行更新和保存

@@ -10,10 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.myway5.www.Pool.MultiFilterPagePool;
 import com.myway5.www.Urlpool.AbstUrlPool;
-import com.myway5.www.Urlpool.MemoryUrlPool;
 import com.myway5.www.Util.Page;
 import com.myway5.www.Util.ProcessSpiderConfig;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class ProcessSpider implements IProcessSpider{
 	private IFilterSpider filterSpider = null;

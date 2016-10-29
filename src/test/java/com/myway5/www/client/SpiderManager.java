@@ -3,8 +3,6 @@ package com.myway5.www.client;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.concurrent.Callable;
-
 import com.myway5.www.Monitor.MonitorEngineAgent;
 import com.myway5.www.Spider.ProcessSpider;
 import com.myway5.www.SpiderManager.AbstSpiderManager;
