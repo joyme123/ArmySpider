@@ -1,6 +1,8 @@
 package com.myway5.www.ThreadPool;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -70,10 +72,26 @@ public class HttpSpiderThreadPool{
 		this.urlPool = urlPool;
 	}
 	
+	public void setUrlPool(Class<AbstUrlPool> clazz){
+		try {
+			Method method = clazz.getMethod("getInstance", null);
+			this.urlPool = (AbstUrlPool)method.invoke(null, null);
+		} catch (NoSuchMethodException e) {
+			logger.error("HttpSpiderThreadPool.setUrlPool()反射调用方法出错");
+		} catch (SecurityException e) {
+			logger.error("HttpSpiderThreadPool.setUrlPool()出现安全异常");
+		} catch (IllegalAccessException e) {
+			logger.error("HttpSpiderThreadPool.setUrlPool()非法访问异常");
+		} catch (IllegalArgumentException e) {
+			logger.error("HttpSpiderThreadPool.setUrlPool()非法参数异常");
+		} catch (InvocationTargetException e) {
+			logger.error("HttpSpiderThreadPool.setUrlPool()调用目标出错");
+		}
+	}
+	
 	public void startExecute(){
 		while(run){
 			if(urlPool != null&&!urlPool.isEmpty()){
-				//TODO urlPool为redis数据库时，
 				//第二次执行时totalUrlCount和leftUrlCount没有实时更新
 				//导致无法执行
 				final String url = urlPool.pull();

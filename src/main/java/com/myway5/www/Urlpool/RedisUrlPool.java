@@ -35,6 +35,11 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 		return urlPool;
 	}
 	
+	/**
+	 * 多线程环境下创建安全
+	 * 这里的多线程指的是多个线程同时获取这个类的实例时
+	 * @return
+	 */
 	public static RedisUrlPool getThreadSafeInstance(String host,int port){
 		return RedisUrlPoolHolder.get(host, port);
 	}

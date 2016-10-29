@@ -72,6 +72,7 @@ public class FileUrlPool extends AbstUrlPool implements IPersistence,Cloneable{
 	}
 	/**
 	 * 多线程环境下创建安全
+	 * 这里的多线程指的是多个线程同时获取这个类的实例时
 	 * @return
 	 */
 	public static FileUrlPool getThreadSafeInstance(){

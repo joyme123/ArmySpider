@@ -6,5 +6,12 @@ package com.myway5.www.privateConstruct;
  *
  */
 public class StaticTest {
-	public static int i = 0;
+	public static StaticTest st;
+	public int i = 0;
+	public static StaticTest getInstance(){
+		if(st == null){
+			st = new StaticTest();
+		}
+		return st;
+	}
 }
