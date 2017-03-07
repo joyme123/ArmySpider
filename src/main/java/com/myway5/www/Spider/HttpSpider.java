@@ -130,7 +130,7 @@ public class HttpSpider {
 			}
 		}catch(IllegalArgumentException e){		//URL无效异常
 			MemoryUrlPool.getInstance().updateFailedCount();
-			logger.debug("无效或失败链接地址{}",url);
+			logger.debug("无效或失败链接地址{}{}",url,e.getMessage());
 		}
 	}
 }
