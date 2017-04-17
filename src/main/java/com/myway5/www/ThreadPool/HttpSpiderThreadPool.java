@@ -100,6 +100,7 @@ public class HttpSpiderThreadPool{
 						if(config!=null)
 							httpSpider.setConfig(config);
 						httpSpider.setProcessSpider(processSpider);
+						httpSpider.setUserAgent("Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10");
 						httpSpider.requestPage(url);
 						return true;
 					}

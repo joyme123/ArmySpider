@@ -12,7 +12,7 @@ import com.myway5.www.Urlpool.Remover.BloomFilterDuplicateRemover;
 import com.myway5.www.client.FirstFilter;
 import com.myway5.www.client.SecondFilter;
 
-public class SpiderManager  extends AbstSpiderManager{
+public class SpiderManagerLong  extends AbstSpiderManager{
 
 	public void manage() {
 		
@@ -29,6 +29,7 @@ public class SpiderManager  extends AbstSpiderManager{
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
 		
 		
+		
 		new MonitorEngineAgent(urlPool).start();
 		System.out.println("start");
 		FirstFilter firstFilter = new FirstFilter();
@@ -43,12 +44,15 @@ public class SpiderManager  extends AbstSpiderManager{
 		
 
 		
-		SpiderManager spiderManager = new SpiderManager();
-		spiderManager.setStartUrl("http://wallpaper.pconline.com.cn")
+		SpiderManagerLong spiderManager = new SpiderManagerLong();
+		spiderManager.setProcessSpider(processSpider)
+					 .setStartUrl("http://wallpaper.pconline.com.cn")
 					 .setUrlPool(urlPool)
-		    		 .setProcessSpider(processSpider)
-		    		 .thread(5)
+		    		 .thread(1)
 		    		 .run();
+		
+		
+		
 		Date date2 = Calendar.getInstance().getTime();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		long stop = Calendar.getInstance().getTimeInMillis();

@@ -6,14 +6,17 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
+import sun.security.jca.GetInstance;
+
 public class SocketClient {
     private String server = "127.0.0.1";
     private int port = 9999;
     private Socket socket;
     private OutputStream os;
     InputStreamReader reader;
-
-    public SocketClient(){
+    private static final SocketClient socketClient = new SocketClient("127.0.0.1",9999);
+    
+    private SocketClient(){
         try {
             socket = new Socket(server, port);
             os = socket.getOutputStream();
@@ -24,7 +27,7 @@ public class SocketClient {
         }
     }
     
-    public SocketClient(String server,int port){
+    private SocketClient(String server,int port){
     	this.server = server;
     	this.port = port;
         try {
@@ -35,6 +38,10 @@ public class SocketClient {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public static SocketClient getInstance(){
+    	 return socketClient;
     }
 
     public void send(byte[] b){

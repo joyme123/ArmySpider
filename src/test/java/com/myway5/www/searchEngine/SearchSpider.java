@@ -17,6 +17,7 @@ public class SearchSpider  extends AbstSpiderManager{
 	}
 	
 	public static void main(String[] args){
+		//RedisUrlPool urlPool = RedisUrlPool.getInstance("127.0.0.1",6379);
 		FileUrlPool urlPool = FileUrlPool.getInstance();
 		urlPool.setPath("/home/jiang/spiderFile");
 		urlPool.setDuplicateChecker(new BloomFilterDuplicateRemover(8000000)); 	//设置去重类为bloomFilter,8000000的预计插入量
@@ -33,17 +34,15 @@ public class SearchSpider  extends AbstSpiderManager{
 		
 		
 		ProcessSpider processSpider = new ProcessSpider();
-		processSpider.setTargetUrl("");
-		processSpider.setLimitation("");
 		processSpider.setFilterSpider(firstFilter);
 		
 
 		
 		SearchSpider spiderManager = new SearchSpider();
-		spiderManager.setStartUrl("http://myway5.com")
+		spiderManager.setProcessSpider(processSpider)
+					.setStartUrl("http://www.cnblogs.com")
 					 .setUrlPool(urlPool)
-		    		 .setProcessSpider(processSpider)
-		    		 .thread(5)
+		    		 .thread(1)
 		    		 .run();
 		Date date2 = Calendar.getInstance().getTime();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

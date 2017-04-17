@@ -20,17 +20,20 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 	private JedisPool jedisPool;
+	private Jedis jedis = null;
 	private static RedisUrlPool urlPool;
 	private static boolean empty;
 	
 	private RedisUrlPool(String host,int port){
 		jedisPool = new JedisPool(new JedisPoolConfig(),host,port);
+		jedis = jedisPool.getResource();
 		empty = false;
 	}
 	
 	public static RedisUrlPool getInstance(String host,int port){
 		if(urlPool == null){
 			urlPool = new RedisUrlPool(host, port);
+			
 		}
 		return urlPool;
 	}
@@ -61,9 +64,8 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 	 * 使用redis数据库时会自动对插入的url进行去重，所以这里直接重写父类的push方法即可
 	 */
 	 public void push(String url){
-		Jedis jedis = null;
 		try{
-			jedis = jedisPool.getResource();
+
 			if(!jedis.sismember("totalSet", url)){
 				jedis.sadd("totalSet", url);		//如果不存在，就加入
 				jedis.rpush("leftList", url);
@@ -72,12 +74,7 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 			}
 		} catch (Exception e) {  
             e.printStackTrace();  
-        } finally {  
-            if (null != jedis) {  
-                //释放已经用过的连接  
-                jedis.close();   
-            }  
-        }  
+        } 
 	}
 	
 
@@ -94,12 +91,7 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 			}
 		} catch (Exception e) {  
             e.printStackTrace();  
-        } finally {  
-            if (null != jedis) {  
-                //释放已经用过的连接  
-                jedis.close();   
-            }  
-        }  
+        }
 		return url;
 	}
 	
@@ -118,6 +110,7 @@ public class RedisUrlPool extends AbstUrlPool implements IPersistence{
 	 * 释放redis的资源
 	 */
 	public void close() throws IOException {
-		 jedisPool.destroy(); 
+		jedis.close();
+		jedisPool.destroy(); 
 	}
 }
